@@ -1,7 +1,8 @@
 ﻿# Almighty Max
 
 ## To get running
-
-```dotnet user-secret init```
+Ensure you are in the root directory of the project (the one that contains Program.cs) and perform the following commands
 <br/>
-```dotnet user-secret add "AlmightyMaxSecrets:Token" "<Token>"```
+```dotnet user-secrets init```
+<br/>
+```dotnet user-secrets set "AlmightyMaxSecrets:Token" "<Token>"```

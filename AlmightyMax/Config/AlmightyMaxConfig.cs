@@ -13,7 +13,7 @@ namespace AlmightyMax.Config
     {
         public IConfiguration Config { get; private set; }
 
-        public static AlmightyMaxConfig UseDefaultConfig => new AlmightyMaxConfig();
+        public static IConfiguration UseDefaultConfig => new AlmightyMaxConfig().Config;
 
         public AlmightyMaxConfig()
         {

@@ -44,14 +44,14 @@ namespace AlmightyMax
         static async Task MainAsync(string[] args)
         {
             #region client-specific configurations
-            AlmightyMaxConfig maxConfig = AlmightyMaxConfig.UseDefaultConfig;
+            IConfiguration maxConfig = AlmightyMaxConfig.UseDefaultConfig;
 
             #endregion
 
             #region configure client components
             _discordClient = new DiscordClient(new DiscordConfiguration
             {
-                Token = maxConfig.Config["AlmightyMaxSecrets:Token"],
+                Token = maxConfig["AlmightyMaxSecrets:Token"],
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Debug
@@ -59,7 +59,7 @@ namespace AlmightyMax
 
             _commandsNextExtension = _discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = maxConfig.Config.GetSection("AlmightyMax:Prefixes").Get<string[]>(),
+                StringPrefixes = maxConfig.GetSection("AlmightyMax:Prefixes").Get<string[]>(),
                 EnableDms = false,
                 CaseSensitive = false
             });
