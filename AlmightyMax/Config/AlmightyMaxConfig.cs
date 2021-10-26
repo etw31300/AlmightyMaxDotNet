@@ -20,6 +20,7 @@ namespace AlmightyMax.Config
             // Grab secrets and add them to configuration
             SecretsConfig = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddUserSecrets<AlmightyMaxSecrets>()
                 .Build();
@@ -30,15 +31,6 @@ namespace AlmightyMax.Config
                 .BuildServiceProvider();
 
             serviceProvider.GetService<AlmightyMaxSecrets>();
-            
-            // Bring in basic application configuration for JSON Deserialization
-            var json = "";
-
-            using var fs = File.OpenRead($@"{AppDomain.CurrentDomain.BaseDirectory}\appsettings.json");
-            using var sr = new StreamReader(fs, Encoding.UTF8);
-            json = sr.ReadToEnd();
-            
-            
         }
     }
 }

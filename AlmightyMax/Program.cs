@@ -59,7 +59,7 @@ namespace AlmightyMax
 
             _commandsNextExtension = _discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = new List<string>{"m!"},
+                StringPrefixes = maxConfig.SecretsConfig.GetSection("AlmightyMax:Prefixes").Get<string[]>(),
                 EnableDms = false,
                 CaseSensitive = false
             });
