@@ -11,14 +11,14 @@ namespace AlmightyMax.Config
 {
     public class AlmightyMaxConfig
     {
-        public IConfiguration SecretsConfig { get; private set; }
+        public IConfiguration Config { get; private set; }
 
         public static AlmightyMaxConfig UseDefaultConfig => new AlmightyMaxConfig();
 
         public AlmightyMaxConfig()
         {
             // Grab secrets and add them to configuration
-            SecretsConfig = new ConfigurationBuilder()
+            Config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
@@ -26,7 +26,7 @@ namespace AlmightyMax.Config
                 .Build();
 
             var serviceProvider = new ServiceCollection()
-                .Configure<AlmightyMaxSecrets>(SecretsConfig.GetSection(nameof(AlmightyMaxSecrets)))
+                .Configure<AlmightyMaxSecrets>(Config.GetSection(nameof(AlmightyMaxSecrets)))
                 .AddOptions()
                 .BuildServiceProvider();
 

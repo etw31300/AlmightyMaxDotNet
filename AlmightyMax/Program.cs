@@ -51,7 +51,7 @@ namespace AlmightyMax
             #region configure client components
             _discordClient = new DiscordClient(new DiscordConfiguration
             {
-                Token = maxConfig.SecretsConfig["AlmightyMaxSecrets:Token"],
+                Token = maxConfig.Config["AlmightyMaxSecrets:Token"],
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Debug
@@ -59,7 +59,7 @@ namespace AlmightyMax
 
             _commandsNextExtension = _discordClient.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefixes = maxConfig.SecretsConfig.GetSection("AlmightyMax:Prefixes").Get<string[]>(),
+                StringPrefixes = maxConfig.Config.GetSection("AlmightyMax:Prefixes").Get<string[]>(),
                 EnableDms = false,
                 CaseSensitive = false
             });
