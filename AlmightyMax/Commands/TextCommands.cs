@@ -16,7 +16,7 @@ namespace AlmightyMax.Commands
         /// </param>
         [Command("bark")]
         [Aliases("bork")]
-        [Description("Make Max Bark!")]
+        [Description("Make Max bark")]
         public async Task Bark(CommandContext ctx)
         {
             await ctx.RespondAsync("Bork Bork!");

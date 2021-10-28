@@ -28,6 +28,8 @@ namespace AlmightyMax
         private static InteractivityExtension _interactivityExtension;
         private static VoiceNextExtension _voiceNextExtension;
         private static LavalinkExtension _lavalinkExtension;
+        
+        public static LavalinkNodeConnection LavalinkNodeConnection { get; private set; }
 
         static void Main(string[] args)
         {
@@ -44,8 +46,11 @@ namespace AlmightyMax
         static async Task MainAsync(string[] args)
         {
             #region client-specific configurations
-            IConfiguration maxConfig = AlmightyMaxConfig.UseDefaultConfig;
-
+            IConfiguration maxConfig = AlmightyMaxConfig.UseDefault;
+            
+            //Lavalink
+            LavalinkConfiguration lavalinkConfig = LavalinkConfig.UseDefault;
+            LavalinkConfig.InitializeLavalinkProcess(); //initializes the Lavalink process
             #endregion
 
             #region configure client components
@@ -77,15 +82,18 @@ namespace AlmightyMax
             });
 
             _lavalinkExtension = _discordClient.UseLavalink();
+
             #endregion
 
             #region command registration
             _commandsNextExtension.RegisterCommands<TextCommands>();
+            _commandsNextExtension.RegisterCommands<MusicCommands>();
             #endregion
 
             #region connect client and keep alive
             
             await _discordClient.ConnectAsync();
+            LavalinkNodeConnection = await _lavalinkExtension.ConnectAsync(lavalinkConfig);
             await Task.Delay(-1);
             
             #endregion

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AlmightyMax.Domain.Configuration
 {
+    /// <summary>
+    /// Definition structure for JSON items stored in AlmightyMaxSecrets
+    /// </summary>
     class AlmightyMaxSecrets
     {
         public string Token { get; set; }
