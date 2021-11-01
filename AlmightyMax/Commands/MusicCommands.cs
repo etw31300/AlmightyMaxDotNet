@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AlmightyMax.Config;
+using AlmightyMax.Util.Embeds;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
@@ -20,11 +20,12 @@ namespace AlmightyMax.Commands
 
             if (!lavalink.ConnectedNodes.Any())
             {
-                Console.Error.WriteLine("Lavalink connection not established");
+                await Console.Error.WriteLineAsync("Lavalink connection not established");
                 return;
             }
 
-            DiscordChannel vc = ctx.Member?.VoiceState?.Channel;
+            //Get the voice channel that the invoking user is in
+            DiscordChannel vc = ctx.Member.VoiceState.Channel;
 
             if (vc == null)
             {
@@ -32,7 +33,25 @@ namespace AlmightyMax.Commands
                 return;
             }
             
+            var lavaNode = lavalink.ConnectedNodes.Values.First();
             
+            //Get the guild connection or connect if one doesn't exist
+            var connection = lavalink.GetGuildConnection(vc.Guild) ?? await lavaNode.ConnectAsync(vc);
+
+            var trackLoadResult = await lavaNode.Rest.GetTracksAsync(searchQuery);
+
+            if (trackLoadResult.LoadResultType is LavalinkLoadResultType.LoadFailed or LavalinkLoadResultType.NoMatches)
+            {
+                await ctx.RespondAsync($"Failed to load track {searchQuery}");
+                await Console.Error.WriteLineAsync($"Error loading Lavalink Track: {trackLoadResult.Exception.Message}");
+                return;
+            }
+
+            var track = trackLoadResult.Tracks.First();
+            
+            await connection.PlayAsync(track);
+
+            await ctx.RespondAsync(new TrackPlaybackEmbed(track).Result);
         }
     }
 }
