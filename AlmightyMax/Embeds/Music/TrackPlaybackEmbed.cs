@@ -1,12 +1,10 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 
-namespace AlmightyMax.Util.Embeds
+namespace AlmightyMax.Embeds.Music
 {
     public class TrackPlaybackEmbed : BaseEmbed
     {
-        public DiscordEmbed Result { get; private set; }
-
         public TrackPlaybackEmbed(LavalinkTrack track)
         {
             DiscordEmbedBuilder builder = Builder;

@@ -5,12 +5,12 @@ using DSharpPlus.Lavalink;
 
 namespace AlmightyMax.Music.Lavalink
 {
-    public class SongQueues
+    public class LavalinkTrackQueues
     {
         /// <summary>
         /// Registry of all the queues
         /// </summary>
-        public static Dictionary<long, LinkedList<LavalinkTrack>> QueueRegistry;
+        public static Dictionary<ulong, LinkedList<LavalinkTrack>> QueueRegistry;
 
         /// <summary>
         /// Initialize the new queue
@@ -21,10 +21,10 @@ namespace AlmightyMax.Music.Lavalink
         /// <returns>
         /// QueueRegistry after operation is completed
         /// </returns>
-        public static Dictionary<long, LinkedList<LavalinkTrack>> Create(Dictionary<long, LinkedList<LavalinkTrack>> initDictionary = null)
+        public static Dictionary<ulong, LinkedList<LavalinkTrack>> Create(Dictionary<ulong, LinkedList<LavalinkTrack>> initDictionary = null)
         {
             if (initDictionary == null || initDictionary.Count == 0)
-                QueueRegistry = new Dictionary<long, LinkedList<LavalinkTrack>>();
+                QueueRegistry = new Dictionary<ulong, LinkedList<LavalinkTrack>>();
             else
                 QueueRegistry = initDictionary;
             return QueueRegistry;
@@ -42,7 +42,7 @@ namespace AlmightyMax.Music.Lavalink
         /// <returns>
         /// LavalinkTrack that was just added to the queue successfully. Returns null if an error occurred.
         /// </returns>
-        public static LavalinkTrack AddTrack(long guildId, LavalinkTrack track)
+        public static LavalinkTrack AddTrack(ulong guildId, LavalinkTrack track)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace AlmightyMax.Music.Lavalink
         /// LavalinkTrack that is next in the queue. Returns null if the queue doesn't exist or if there are no songs in
         /// the queue.
         /// </returns>
-        public static LavalinkTrack Seek(long guildId)
+        public static LavalinkTrack Seek(ulong guildId)
         {
             if (!QueueRegistry.ContainsKey(guildId))
             {

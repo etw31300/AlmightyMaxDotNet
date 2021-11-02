@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AlmightyMax.Util.Embeds;
+using AlmightyMax.Embeds;
+using AlmightyMax.Embeds.Music;
+using AlmightyMax.Music.Lavalink;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
+using DSharpPlus.Lavalink.EventArgs;
 
 namespace AlmightyMax.Commands
 {
@@ -49,9 +52,20 @@ namespace AlmightyMax.Commands
 
             var track = trackLoadResult.Tracks.First();
             
-            await connection.PlayAsync(track);
-
-            await ctx.RespondAsync(new TrackPlaybackEmbed(track).Result);
+            //if a track is already playing
+            if (connection.CurrentState.CurrentTrack != null)
+            {
+                var returnedTrack = LavalinkTrackQueues.AddTrack(vc.GuildId.GetValueOrDefault(), track);
+                if (returnedTrack != null)
+                    await ctx.RespondAsync(new TrackAddedSuccessEmbed(returnedTrack).Result);
+                else
+                    await ctx.RespondAsync(new TrackAddedFailedEmbed(track).Result);
+            }
+            else
+            {
+                await connection.PlayAsync(track);
+                await ctx.RespondAsync(new TrackPlaybackEmbed(track).Result);
+            }
         }
     }
 }
