@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AlmightyMax.Commands;
 using AlmightyMax.Config;
 using AlmightyMax.Domain.Configuration;
+using AlmightyMax.Music.Lavalink;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
@@ -51,6 +52,7 @@ namespace AlmightyMax
             //Lavalink
             LavalinkConfiguration lavalinkConfig = LavalinkConfig.UseDefault;
             LavalinkConfig.InitializeLavalinkProcess(); //initializes the Lavalink process
+            await LavalinkQueuesManager.Create();       //initializes the Lavalink queue manager
             #endregion
 
             #region configure client components

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Loader;
+using System.Threading;
 using System.Threading.Tasks;
 using AlmightyMax.Embeds;
 using AlmightyMax.Embeds.Music;
@@ -9,6 +11,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
+using Emzi0767.Utilities;
 
 namespace AlmightyMax.Commands
 {
@@ -28,7 +31,7 @@ namespace AlmightyMax.Commands
             }
 
             //Get the voice channel that the invoking user is in
-            DiscordChannel vc = ctx.Member.VoiceState.Channel;
+            var vc = ctx.Member.VoiceState.Channel;
 
             if (vc == null)
             {
@@ -39,7 +42,7 @@ namespace AlmightyMax.Commands
             var lavaNode = lavalink.ConnectedNodes.Values.First();
             
             //Get the guild connection or connect if one doesn't exist
-            var connection = lavalink.GetGuildConnection(vc.Guild) ?? await lavaNode.ConnectAsync(vc);
+            var guildConnection = lavalink.GetGuildConnection(vc.Guild) ?? await lavaNode.ConnectAsync(vc);
 
             var trackLoadResult = await lavaNode.Rest.GetTracksAsync(searchQuery);
 
@@ -53,18 +56,68 @@ namespace AlmightyMax.Commands
             var track = trackLoadResult.Tracks.First();
             
             //if a track is already playing
-            if (connection.CurrentState.CurrentTrack != null)
+            if (guildConnection.CurrentState.CurrentTrack != null)
             {
-                var returnedTrack = LavalinkTrackQueues.AddTrack(vc.GuildId.GetValueOrDefault(), track);
+                var returnedTrack = await LavalinkQueuesManager.AddTrack(vc.GuildId.GetValueOrDefault(), track);
                 if (returnedTrack != null)
-                    await ctx.RespondAsync(new TrackAddedSuccessEmbed(returnedTrack).Result);
+                    await ctx.RespondAsync(new TrackAddedSuccessEmbed(returnedTrack).GetResult());
                 else
-                    await ctx.RespondAsync(new TrackAddedFailedEmbed(track).Result);
+                    await ctx.RespondAsync(new TrackAddedFailedEmbed(track).GetResult());
             }
             else
             {
-                await connection.PlayAsync(track);
-                await ctx.RespondAsync(new TrackPlaybackEmbed(track).Result);
+                await guildConnection.PlayAsync(track);
+                await ctx.RespondAsync(new TrackPlaybackEmbed(track).GetResult());
+            }
+
+            guildConnection.DiscordWebSocketClosed += (sender, args) => LavalinkEventHandlers.GuildConnectionOnWebSocketClosed(sender, args, ctx);
+
+            guildConnection.PlaybackFinished -= (sender, args) => LavalinkEventHandlers.GuildConnectionOnPlaybackFinished(sender, args, ctx);
+            guildConnection.PlaybackFinished += (sender, args) =>  LavalinkEventHandlers.GuildConnectionOnPlaybackFinished(sender, args, ctx);
+        }
+
+
+        [Command("skip")]
+        [Description("Skips the current song to the next in the queue")]
+        public async Task Skip(CommandContext ctx)
+        {
+            var lavalink = ctx.Client.GetLavalink();
+            
+            if (!lavalink.ConnectedNodes.Any())
+            {
+                await Console.Error.WriteLineAsync("Lavalink connection not established");
+                return;
+            }
+            
+            //Get the voice channel that the invoking user is in
+            var vc = ctx.Member.VoiceState.Channel;
+
+            if (vc == null)
+            {
+                await ctx.RespondAsync("You need to be connected to a voice channel to do that.");
+                return;
+            }
+
+            var lavaNode = lavalink.ConnectedNodes.Values.First();
+
+            var guildConnection = lavaNode.GetGuildConnection(vc.Guild);
+            
+            if (guildConnection == null)
+            {
+                await ctx.RespondAsync("I am not currently in a voice channel. You must play music first!");
+                return;
+            }
+
+            var track = await LavalinkQueuesManager.Seek(vc.GuildId.GetValueOrDefault());
+
+            if (track == null)
+            {
+                await ctx.RespondAsync(new TrackPlaybackEmptyQueueEmbed().GetResult());
+            }
+            else
+            {
+                await guildConnection.PlayAsync(track);
+                await ctx.RespondAsync(new TrackPlaybackEmbed(track).GetResult());
             }
         }
     }

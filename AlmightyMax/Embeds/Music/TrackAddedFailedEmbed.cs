@@ -7,13 +7,10 @@ namespace AlmightyMax.Embeds.Music
     {
         public TrackAddedFailedEmbed(LavalinkTrack track)
         {
-            DiscordEmbedBuilder builder = Builder;
+            DiscordEmbedBuilder builder = GetBuilder();
 
             builder.Color = DiscordColor.Red;
-            builder.Url = track.Uri.ToString();
-            builder.Description = $"Failed trying to add {track.Title} to the queue.";
-
-            Result = builder.Build();
+            builder.Description = $"Failed trying to add [{track.Title}]({track.Uri.ToString()}) to the queue.";
         }
     }
 }

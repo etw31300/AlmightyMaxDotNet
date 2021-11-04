@@ -5,28 +5,17 @@ namespace AlmightyMax.Embeds
 {
     public abstract class BaseEmbed : IEmbed
     {
-        public const string MaxColor = "#765c4d";
-        public const string MaxName = "Almighty Max";
-        public const string MaxIconUrl = "https://cdn.discordapp.com/app-icons/345646168933531658/688450b718b78955323209757e55a281.png?size=256";
+        private const string MaxColor = "#765c4d";
+        private const string MaxName = "Almighty Max";
+        private const string MaxIconUrl = "https://cdn.discordapp.com/app-icons/345646168933531658/688450b718b78955323209757e55a281.png?size=256";
 
-        public DiscordEmbedBuilder Builder { get; set; }
-        public DiscordEmbed Result { get; set; }
+        private readonly DiscordEmbedBuilder _builder;
+        
+        protected string GetYoutubeThumbnailUrl(string trackId) => $"https://img.youtube.com/vi/{trackId}/1.jpg";
 
-        DiscordEmbed IEmbed.Result
+        protected BaseEmbed()
         {
-            get => this.Result;
-            set => this.Result = value;
-        }
-
-        DiscordEmbedBuilder IEmbed.Builder
-        {
-            get => this.Builder;
-            set => this.Builder = value;
-        }
-
-        public BaseEmbed()
-        {
-            Builder = new DiscordEmbedBuilder
+            _builder = new DiscordEmbedBuilder
             {
                 Color = new DiscordColor(MaxColor),
                 Author = new DiscordEmbedBuilder.EmbedAuthor
@@ -34,8 +23,19 @@ namespace AlmightyMax.Embeds
                     Name = MaxName,
                     IconUrl = MaxIconUrl
                 },
+                Thumbnail = new DiscordEmbedBuilder.EmbedThumbnail(),
                 Timestamp = DateTimeOffset.Now
             };
+        }
+
+        public DiscordEmbedBuilder GetBuilder()
+        {
+            return _builder;
+        }
+
+        public DiscordEmbed GetResult()
+        {
+            return GetBuilder().Build();
         }
     }
 }

@@ -4,7 +4,7 @@ namespace AlmightyMax.Embeds
 {
     public interface IEmbed
     {
-        public DiscordEmbedBuilder Builder { get; set; }
-        public DiscordEmbed Result { get; protected set; }
+        public DiscordEmbedBuilder GetBuilder();
+        public DiscordEmbed GetResult();
     }
 }
